@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2255639A2F0E8BC300584F29 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 225563982F0E8BBC00584F29 /* README.md */; };
 		226BD9BF2EFB3A8D00561D39 /* EneyLocal in Frameworks */ = {isa = PBXBuildFile; productRef = 226BD9BE2EFB3A8D00561D39 /* EneyLocal */; };
 		226BD9C12EFB3A8D00561D39 /* EneyLocalDebug in Frameworks */ = {isa = PBXBuildFile; productRef = 226BD9C02EFB3A8D00561D39 /* EneyLocalDebug */; };
 /* End PBXBuildFile section */
@@ -29,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		225563982F0E8BBC00584F29 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		226BD9932EFB396500561D39 /* ElixChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ElixChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		226BD9A02EFB396600561D39 /* ElixChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ElixChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		226BD9AA2EFB396600561D39 /* ElixChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ElixChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -86,6 +88,7 @@
 				226BD9A32EFB396600561D39 /* ElixChatTests */,
 				226BD9AD2EFB396600561D39 /* ElixChatUITests */,
 				226BD9942EFB396500561D39 /* Products */,
+				225563982F0E8BBC00584F29 /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -224,6 +227,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2255639A2F0E8BC300584F29 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
