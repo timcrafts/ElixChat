@@ -22,7 +22,7 @@ struct ErrorView: View {
         }
         .padding(32)
         .frame(maxWidth: 420)
-        .liquidGlass(material: .regular)
+        .glassEffect()
         .shadow(color: .black.opacity(0.15), radius: 20, x: 0, y: 10)
     }
     

@@ -7,64 +7,61 @@
 
 import SwiftUI
 
-
 struct MainView: View {
-    // Отримуємо ViewModel з Environment
     @Environment(AppViewModel.self) var appViewModel
-    @State private var showSettings = false
     
     var body: some View {
-        NavigationSplitView {
-//            SidebarView(viewModel: appViewModel, showSettings: $showSettings)
-//                .navigationSplitViewColumnWidth(min: 220, ideal: 250)
-//                .background(EffectView(material: .sidebar, blendingMode: .behindWindow))
-            Text("empty")
-        } detail: {
-            ZStack {
-                MeshGradientBackground()
-                    .ignoresSafeArea()
-                    .opacity(0.3)
-                    .onAppear {
-                        if !appViewModel.isEngineReady && !appViewModel.isEngineLoading {
-                            Task {
-                                await appViewModel.initializeEngine()
-                            }
+        ZStack {
+            // Ambient Background
+            MeshGradientBackground()
+                .ignoresSafeArea()
+                .opacity(0.3)
+                .onAppear {
+                    if !appViewModel.isEngineReady && !appViewModel.isEngineLoading {
+                        Task {
+                            await appViewModel.initializeEngine()
                         }
                     }
-                
-                // State Machine for Main Content
-                if appViewModel.isEngineLoading {
-                    VStack(spacing: 16) {
-                        ProgressView()
-                            .controlSize(.extraLarge)
-                        Text("Initializing Engine...")
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(40)
-                    .liquidGlass(material: .ultraThin)
-                    
-                } else if appViewModel.engineError != nil {
-                    ErrorView(viewModel: appViewModel)
-                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
-                    
-                } else {
-                    // Success State
-                    if let currentSession = appViewModel.currentSession {
-                        ChatView(
-                            session: currentSession,
-                            llmService: appViewModel.llmService
-                        )
-                    } else {
-                        EmptyStateView()
-                    }
                 }
+            
+            // Content State Machine
+            if appViewModel.isEngineLoading {
+                loadingView
+            } else if appViewModel.engineError != nil {
+                ErrorView(viewModel: appViewModel)
+                    .transition(.opacity.combined(with: .scale(scale: 0.95)))
+            } else {
+                if let currentSession = appViewModel.currentSession {
+                    // Direct access to the single chat session
+                    ChatView(
+                        session: currentSession,
+                        llmService: appViewModel.llmService
+                    )
+                    .transition(.opacity)
+                } else {
+                    EmptyView()
+                }
+
             }
-            .animation(.easeInOut(duration: 0.3), value: appViewModel.isEngineLoading)
-            .animation(.easeInOut(duration: 0.3), value: appViewModel.engineError != nil)
         }
-//        .sheet(isPresented: $showSettings) {
-//            SettingsView(viewModel: appViewModel)
-//        }
+        .animation(.easeInOut(duration: 0.3), value: appViewModel.isEngineLoading)
+        .animation(.easeInOut(duration: 0.3), value: appViewModel.engineError != nil)
+    }
+    
+    private var loadingView: some View {
+        VStack(spacing: 16) {
+            ProgressView()
+                .controlSize(.extraLarge)
+            Text("Initializing Engine...")
+                .font(.headline)
+                .foregroundStyle(.secondary)
+            if let progress = appViewModel.loadingProgress {
+                ProgressView(progress)
+                    .frame(maxWidth: 200)
+            }
+            
+        }
+        .padding(40)
+        .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 20))
     }
 }

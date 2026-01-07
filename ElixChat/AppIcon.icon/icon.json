@@ -1,0 +1,107 @@
+{
+  "fill-specializations" : [
+    {
+      "value" : {
+        "automatic-gradient" : "display-p3:0.90483,0.54723,0.96783,1.00000"
+      }
+    },
+    {
+      "appearance" : "dark",
+      "value" : {
+        "automatic-gradient" : "display-p3:0.06124,0.08076,0.33297,1.00000"
+      }
+    }
+  ],
+  "groups" : [
+    {
+      "blur-material" : 1,
+      "layers" : [
+        {
+          "glass" : true,
+          "image-name" : "eney-eyes.png",
+          "name" : "eney-eyes"
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.29
+      }
+    },
+    {
+      "blur-material" : 0.5,
+      "layers" : [
+        {
+          "image-name" : "msg1.png",
+          "name" : "msg1"
+        },
+        {
+          "image-name" : "msg2.png",
+          "name" : "msg2"
+        },
+        {
+          "image-name" : "msg3.png",
+          "name" : "msg3"
+        },
+        {
+          "image-name" : "msg4.png",
+          "name" : "msg4"
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "specular" : false,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.67
+      }
+    },
+    {
+      "blur-material" : 0.5,
+      "layers" : [
+        {
+          "image-name" : "eney-body 2.png",
+          "name" : "eney-body 2"
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 1
+      }
+    },
+    {
+      "layers" : [
+        {
+          "glass" : true,
+          "image-name" : "bg.png",
+          "name" : "bg"
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

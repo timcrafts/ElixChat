@@ -27,6 +27,8 @@ class AppViewModel {
     let engineConfigurationProvider: ConfigurationProvider = .init()
     let sessionManager: SessionManager = .init()
     
+    var loadingProgress: Progress?
+    
     init(service: any LLMServiceProtocol) {
         // Conform to Example: Initialize debug logging/tools early
         EneyLocalDebug.initialize()
@@ -68,7 +70,7 @@ class AppViewModel {
         }
         
         do {
-            try await llmService.initializeEngine(with: engineConfig)
+            try await llmService.initializeEngine(with: engineConfig, completion: engineLoadingCompletion)
             isEngineLoading = false
             engineError = nil
         } catch {
@@ -76,7 +78,14 @@ class AppViewModel {
             engineError = error
         }
     }
-    
+    func engineLoadingCompletion(_ progress: Progress) {
+        withAnimation{
+            loadingProgress = progress
+        }
+        if progress.fractionCompleted == 1 {
+            withAnimation(.easeInOut.delay(0.5)) { loadingProgress = nil }
+        }
+    }
     func retryInitialization() async {
         engineError = nil
         await initializeEngine()

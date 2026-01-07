@@ -12,7 +12,7 @@ import LanguageModels
 
 protocol LLMServiceProtocol: Sendable {
     var isReady: Bool { get async }
-    func initializeEngine(with configuration: EngineConfiguration) async throws
+    func initializeEngine(with configuration: EngineConfiguration, completion: @escaping (Progress) -> Void) async throws
     func sendMessage(_ text: String, conversationId: UUID) async throws -> String
     func isEngineReady() -> Bool
 }
@@ -27,7 +27,7 @@ actor LLMService: LLMServiceProtocol {
     
     init() {}
     
-    func initializeEngine(with configuration: EngineConfiguration) async throws {
+    func initializeEngine(with configuration: EngineConfiguration, completion: @escaping (Progress) -> Void) async throws {
         // --- KEY FIX: Set Environment Variable ---
         // Some underlying libraries ignore the config object and look strictly for the env var.
         if !configuration.hfToken.isEmpty {
@@ -71,16 +71,15 @@ actor LLMService: LLMServiceProtocol {
         self.engine = engine
         
         // Load components
-        try await mnemos.load(progressHandler: proggressHandler(_:))
+        try await mnemos.load { progress in
+            print(progress)
+            completion(progress)
+        }
         try await engine.load()
         try await engine.update(tools: [])
         
         print("EneyLocal Engine is ready!")
         self.isReady = true
-    }
-    
-    private func proggressHandler(_ progress: Progress) {
-        print(progress)
     }
     
     func sendMessage(_ text: String, conversationId: UUID) async throws -> String {
@@ -111,6 +110,7 @@ actor LLMService: LLMServiceProtocol {
     }
     
     func isEngineReady() -> Bool {
-        return isReady
+        let result = isReady
+        return result
     }
 }

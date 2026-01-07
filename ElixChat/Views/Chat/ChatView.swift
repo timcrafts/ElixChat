@@ -11,7 +11,6 @@ import Observation
 struct ChatView: View {
     var viewModel: ChatViewModel
     @State private var inputMessage: String = ""
-    
     @FocusState private var isInputFocused: Bool
     
     init(session: ChatSession, llmService: any LLMServiceProtocol) {
@@ -19,16 +18,35 @@ struct ChatView: View {
     }
     
     var body: some View {
-        
         VStack(spacing: 0) {
-            header()
-            chatList()
-            inputBar()
+            // Simplified Header
+            HStack {
+                Text("Eney Local")
+                    .font(.system(.headline, design: .rounded))
+                    .opacity(0.8)
+                Spacer()
+                if viewModel.isTyping {
+                    Text("Generating...")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(.ultraThinMaterial, in: Capsule())
+                }
+            }
+            .padding()
+            .background(.ultraThinMaterial)
+            .overlay(Divider().opacity(0.2), alignment: .bottom)
+            
+            chatList
+            inputBar
+        }
+        .onAppear {
+            isInputFocused = true
         }
     }
     
-    @ViewBuilder
-    private func chatList() -> some View {
+    private var chatList: some View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 24) {
@@ -37,6 +55,7 @@ struct ChatView: View {
                     ForEach(viewModel.session.messages) { message in
                         MessageBubble(message: message)
                             .id(message.id)
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
                     
                     if viewModel.isTyping {
@@ -44,9 +63,6 @@ struct ChatView: View {
                             TypingIndicator()
                                 .scaleEffect(0.8)
                                 .padding(.leading)
-                            Text("Eney думає...")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
                             Spacer()
                         }
                         .id("typingIndicator")
@@ -72,44 +88,20 @@ struct ChatView: View {
                 if newValue { scrollToBottom(proxy: proxy, id: "typingIndicator") }
             }
         }
-
     }
     
-    @ViewBuilder
-    private func header() -> some View {
-        HStack {
-            Text(viewModel.session.title)
-                .font(.system(.headline, design: .rounded))
-                .opacity(0.8)
-            Spacer()
-            Text("macOS 26 • EneyLocal")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(.ultraThinMaterial, in: Capsule())
-        }
-        .padding()
-        .background(.ultraThinMaterial)
-        .overlay(Divider().opacity(0.2), alignment: .bottom)
-        
-    }
-    
-    @ViewBuilder
-    private func inputBar() -> some View {
+    private var inputBar: some View {
         VStack {
             HStack(alignment: .bottom, spacing: 12) {
-                TextField("Запитайте Eney...", text: $inputMessage, axis: .vertical)
+                TextField("Ask anything...", text: $inputMessage, axis: .vertical)
                     .font(.system(.body, design: .rounded))
                     .textFieldStyle(.plain)
                     .padding(14)
                     .focused($isInputFocused)
                     .lineLimit(1...8)
-                    .onSubmit { viewModel.sendMessage(inputMessage); inputMessage = "" }
+                    .onSubmit { sendMessage() }
                 
-                Button(action: {
-                    withAnimation { viewModel.sendMessage(inputMessage); inputMessage = ""  }
-                }) {
+                Button(action: sendMessage) {
                     Image(systemName: "arrow.up")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.white)
@@ -120,15 +112,22 @@ struct ChatView: View {
                         )
                         .shadow(color: .blue.opacity(0.3), radius: 5, x: 0, y: 3)
                 }
-                .disabled(inputMessage.isEmpty || viewModel.isTyping)
+                .disabled(inputMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.isTyping)
                 .buttonStyle(.plain)
                 .padding(6)
             }
-            .liquidGlass()
+            .glassEffect()
             .padding(.horizontal)
             .padding(.bottom, 20)
         }
-
+    }
+    
+    private func sendMessage() {
+        guard !inputMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        withAnimation {
+            viewModel.sendMessage(inputMessage)
+            inputMessage = ""
+        }
     }
     
     private func scrollToBottom(proxy: ScrollViewProxy, id: AnyHashable? = nil) {
