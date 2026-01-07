@@ -9,14 +9,12 @@ import Foundation
 
 // --- Models ---
 
-/// Роль учасника чату
 enum MessageRole: String, Codable {
     case user
     case assistant
     case system
 }
 
-/// Модель одного повідомлення
 struct ChatMessage: Identifiable, Codable, Hashable {
     let id: UUID
     let role: MessageRole
@@ -31,7 +29,6 @@ struct ChatMessage: Identifiable, Codable, Hashable {
     }
 }
 
-/// Модель сесії чату (діалогу)
 struct ChatSession: Identifiable, Codable, Hashable {
     let id: UUID
     var title: String

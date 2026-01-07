@@ -19,32 +19,14 @@ struct ChatView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Simplified Header
-            HStack {
-                Text("Eney Local")
-                    .font(.system(.headline, design: .rounded))
-                    .opacity(0.8)
-                Spacer()
-                if viewModel.isTyping {
-                    Text("Generating...")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(.ultraThinMaterial, in: Capsule())
-                }
-            }
-            .padding()
-            .background(.ultraThinMaterial)
-            .overlay(Divider().opacity(0.2), alignment: .bottom)
-            
             chatList
-            inputBar
+                .safeAreaInset(edge: .bottom, content: { inputBar })
         }
         .onAppear {
             isInputFocused = true
         }
     }
+
     
     private var chatList: some View {
         ScrollViewReader { proxy in
@@ -92,33 +74,33 @@ struct ChatView: View {
     
     private var inputBar: some View {
         VStack {
-            HStack(alignment: .bottom, spacing: 12) {
+            HStack(alignment: .bottom, spacing: 6) {
                 TextField("Ask anything...", text: $inputMessage, axis: .vertical)
                     .font(.system(.body, design: .rounded))
                     .textFieldStyle(.plain)
-                    .padding(14)
                     .focused($isInputFocused)
+                    .frame(minHeight: 30)
                     .lineLimit(1...8)
                     .onSubmit { sendMessage() }
+                    .padding(.leading, 6)
                 
                 Button(action: sendMessage) {
                     Image(systemName: "arrow.up")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.white)
-                        .frame(width: 36, height: 36)
+                        .frame(width: 30, height: 30)
                         .background(
                             Circle()
-                                .fill(LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                .fill(LinearGradient(colors: [.pink, .purple], startPoint: .topLeading, endPoint: .bottomTrailing))
                         )
                         .shadow(color: .blue.opacity(0.3), radius: 5, x: 0, y: 3)
                 }
                 .disabled(inputMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.isTyping)
                 .buttonStyle(.plain)
-                .padding(6)
             }
-            .glassEffect()
-            .padding(.horizontal)
-            .padding(.bottom, 20)
+            .padding(10)
+            .glassEffect(in: ConcentricRectangle(corners: .concentric(minimum: 28)))
+            .padding(10)
         }
     }
     
@@ -147,6 +129,8 @@ struct ChatView: View {
         id: UUID(),
         title: "Test",
           messages: [
+            ChatMessage(role: .user, content: "Hello"),
+            ChatMessage(role: .assistant, content: "How are you"),
             ChatMessage(role: .user, content: "Hello"),
             ChatMessage(role: .assistant, content: "How are you"),
             ChatMessage(role: .user, content: "Hello"),

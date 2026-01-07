@@ -9,26 +9,48 @@ import SwiftUI
 
 @main
 struct ElixChatApp: App {
-    // Створюємо StateObject вручну в init, щоб передати залежності
     private var appViewModel: AppViewModel
     
     init() {
-        // 1. Створюємо конфігурацію
-        let config = EngineConfiguration()
-        
-        // 2. Створюємо сервіс (тут буде жити наш EneyLocal)
         let service = LLMService()
-        
-        // 3. Ініціалізуємо ViewModel з цим сервісом
         appViewModel = AppViewModel(service: service)
     }
     
     var body: some Scene {
         WindowGroup {
             MainView()
-                // Передаємо ViewModel як EnvironmentObject, щоб доступ був всюди
                 .environment(appViewModel)
+                .background(WindowAccessor { window in
+                    window.isOpaque = false
+                    window.backgroundColor = .black.withAlphaComponent(0.95)
+                    window.titlebarAppearsTransparent = true
+                    window.titleVisibility = .hidden
+                    window.styleMask.insert(.fullSizeContentView)
+                    
+                    // Allow moving the window by dragging the background
+                    window.isMovableByWindowBackground = true
+                })
         }
+        // Hide the standard system title bar
+        .windowStyle(.hiddenTitleBar)
+        // Set a default size (optional but good for custom windows)
+        .defaultSize(width: 450, height: 600)
     }
 }
 
+// Helper to access the underlying NSWindow
+struct WindowAccessor: NSViewRepresentable {
+    var callback: (NSWindow) -> Void
+    
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView()
+        DispatchQueue.main.async {
+            if let window = view.window {
+                self.callback(window)
+            }
+        }
+        return view
+    }
+    
+    func updateNSView(_ nsView: NSView, context: Context) {}
+}
