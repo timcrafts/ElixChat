@@ -10,5 +10,6 @@
 - download this repo
 - open in Xcode
 - Run (it should work)
+- At the first launch, it will ask you to add Hugging Face key. You can copy it from the 1Password.
 
 Hope this helps with prompt testing!
